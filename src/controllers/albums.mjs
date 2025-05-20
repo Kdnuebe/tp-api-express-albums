@@ -1,4 +1,5 @@
 import AlbumModel from '../models/album.mjs';
+import verifyJWT from '../middleware/auth.mjs'; // ⬅️ ajout du middleware
 
 const Albums = class Albums {
   constructor(app, connect) {
@@ -24,7 +25,7 @@ const Albums = class Albums {
   }
 
   create() {
-    this.app.post('/album/', (req, res) => {
+    this.app.post('/album/', verifyJWT, (req, res) => { // ⬅️ protégé
       try {
         const albumModel = new this.AlbumModel(req.body);
 
@@ -41,7 +42,7 @@ const Albums = class Albums {
   }
 
   update() {
-    this.app.put('/album/:id', (req, res) => {
+    this.app.put('/album/:id', verifyJWT, (req, res) => { // ⬅️ protégé
       try {
         this.AlbumModel.findByIdAndUpdate(req.params.id, req.body, { new: true })
           .then((album) => {
@@ -57,7 +58,7 @@ const Albums = class Albums {
   }
 
   deleteById() {
-    this.app.delete('/album/:id', (req, res) => {
+    this.app.delete('/album/:id', verifyJWT, (req, res) => { // ⬅️ protégé
       try {
         this.AlbumModel.findByIdAndDelete(req.params.id).then((album) => {
           res.status(200).json(album || {});

@@ -14,9 +14,7 @@ const Schema = new mongoose.Schema({
   transform: (doc, ret) => {
     const retUpdated = ret;
     retUpdated.id = ret._id;
-
     delete retUpdated._id;
-
     return retUpdated;
   }
 });

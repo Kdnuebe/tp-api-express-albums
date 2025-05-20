@@ -1,5 +1,6 @@
 import PhotoModel from '../models/photo.mjs';
 import AlbumModel from '../models/album.mjs';
+import verifyJWT from '../middleware/auth.mjs'; // ⬅️ Middleware ajouté
 
 const Photos = class Photos {
   constructor(app, connect) {
@@ -44,7 +45,7 @@ const Photos = class Photos {
   }
 
   create() {
-    this.app.post('/album/:idalbum/photo', (req, res) => {
+    this.app.post('/album/:idalbum/photo', verifyJWT, (req, res) => {
       try {
         const data = {
           ...req.body,
@@ -54,7 +55,6 @@ const Photos = class Photos {
         const photo = new this.PhotoModel(data);
 
         photo.save().then((savedPhoto) => {
-          // Ajouter la photo dans l'album associé
           this.AlbumModel.findByIdAndUpdate(
             req.params.idalbum,
             { $push: { photos: savedPhoto._id } },
@@ -75,7 +75,7 @@ const Photos = class Photos {
   }
 
   update() {
-    this.app.put('/album/:idalbum/photo/:idphotos', (req, res) => {
+    this.app.put('/album/:idalbum/photo/:idphotos', verifyJWT, (req, res) => {
       try {
         this.PhotoModel.findOneAndUpdate(
           {
@@ -97,7 +97,7 @@ const Photos = class Photos {
   }
 
   delete() {
-    this.app.delete('/album/:idalbum/photo/:idphotos', (req, res) => {
+    this.app.delete('/album/:idalbum/photo/:idphotos', verifyJWT, (req, res) => {
       try {
         this.PhotoModel.findOneAndDelete({
           _id: req.params.idphotos,
